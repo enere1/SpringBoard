@@ -53,12 +53,26 @@
 	showList(1);
 
 	function showList(page) {
-	replyService.getList({bno : bnoValue,page : page || 1},function(list) {
-		var str = "";
-	if (list == null|| list.length == 0) {
-	replyUL.html("");
-	return;
+		console.log("show list"+page);
+	replyService.getList({bno : bnoValue,page : page || 1},
+	function(replyCnt, list) {
+		console.log("replyCnt :"+ replyCnt);
+		console.log("list :"+ list);
+		console.log(list);
+	
+	if(page== -1){
+		pageNum = Math.ceil(replyCnt/10.0);
+		showList(pageNum);
+		return;
 	}
+		
+	var str = "";
+	
+	if (list == null|| list.length == 0) {
+	return;
+	
+	}
+	//댓글 출력
 	for (var i = 0, len = list.length || 0; i < len; i++) {
 	str += "<li class='left clearfix' data-rno='"+list[i].rno+"'>";
 	str += " <div><div class='header'><strong class='primary-font'>"+ list[i].replyer+ "</storng>";
@@ -66,10 +80,77 @@
 	str += " <p>"+ list[i].reply+ "</p><div></div></li>";
     }
     replyUL.html(str);
+    showReplyPage(replyCnt);
 	});//end function
 		}//end showList
 	
-	
+		
+		
+	 	var pageNum = 1;
+	    var replyPageFooter = $(".panel-footer");
+	    
+	    //댓글 페이지 번호 출력
+	    function showReplyPage(replyCnt){
+	      
+	      //초기값 설정
+	      //Math.ceil메소드 소수점 올림 정수 반환
+	      var endNum = Math.ceil(pageNum / 10.0) * 10;  
+	      var startNum = endNum - 9; 
+	      
+	      //이전 버튼 다음 버튼 초기화 설정
+	      var prev = startNum != 1;
+	      var next = false;
+	      
+	      //reply총 갯수가 100개 미만 이면 endNum 마지막페이지 반올림 하기 
+	      if(endNum * 10 >= replyCnt){
+	        endNum = Math.ceil(replyCnt/10.0);
+	      }
+	      
+	      //reply총갯수 100개 이상이면 next true로
+	      if(endNum * 10 < replyCnt){
+	        next = true;
+	      }
+	      
+	      var str = "<ul class='pagination pull-right'>";
+	      
+	      //
+	      if(prev){
+	        str+= "<li class='page-item'><a class='page-link' href='"+(startNum -1)+"'>Previous</a></li>";
+	      }
+	      
+	      //첫페이지 ~ 마지막페이지 링크
+	      for(var i = startNum ; i <= endNum; i++){
+	        
+	        var active = pageNum == i? "active":"";
+	        
+	        str+= "<li class='page-item "+active+" '><a class='page-link' href='"+i+"'>"+i+"</a></li>";
+	      }
+	      
+	      if(next){
+	        str+= "<li class='page-item'><a class='page-link' href='"+(endNum + 1)+"'>Next</a></li>";
+	      }
+	      
+	      str += "</ul></div>";
+	      
+	      console.log(str);
+	      
+	      replyPageFooter.html(str);
+	    }	
+		
+	    //페이지 클릭시 새로운 댓글 가져오기
+	    replyPageFooter.on("click","li a", function(e){
+	        e.preventDefault();
+	        console.log("page click");
+	        
+	        var targetPageNum = $(this).attr("href");
+	        
+	        console.log("targetPageNum: " + targetPageNum);
+	        
+	        pageNum = targetPageNum;
+	        
+	        showList(pageNum);
+	      });     
+	    
 	var modal = $(".modal");
 	var modalInputReply = modal.find("input[name='reply']");
 	var modalInputReplyer = modal.find("input[name='replyer']");
@@ -79,6 +160,7 @@
 	var modalRemoveBtn = $("#modalRemoveBtn");
 	var modalRegisterBtn = $("#modalRegisterBtn");
 	
+	//댓글 등록버튼 누르기
 	$("#addReplyBtn").on("click", function(e){
 		
 		modal.find("input").val("");
@@ -90,7 +172,7 @@
 		$(".modal").modal("show");
 	});
 
-	
+	//등록버튼 클릭
 	modalRegisterBtn.on("click", function(e){
 		
 		var reply = {
@@ -105,10 +187,12 @@
 			modal.find("input").val("");
 			modal.modal("hide");
 			
-			showList(1);
+			//showList(1);
+			showList(-1); 
 		})
-	});
-	
+	})
+	;
+	//댓글가져오기
 	 $(".chat").on("click", "li", function(e){
 	      
 	      var rno = $(this).data("rno");
@@ -130,6 +214,7 @@
 	      });
 	    });
 	
+	//수정버튼
 	modalModBtn.on("click", function(e){
 		
 		var reply = {rno:modal.data("rno"), reply: modalInputReply.val()};
@@ -137,11 +222,11 @@
 			
 			alert(result);
 			modal.modal("hide");
-			showList(1);
+			showList(pageNum);
 		});
 	});
 	
-	
+	//삭제버튼
 	modalRemoveBtn.on("click", function(e){
 		
 		var rno = modal.data("rno");
@@ -149,7 +234,7 @@
 			
 			alert(result);
 			modal.modal("hide");
-			showList(1);
+			showList(pageNum);
 			
 		});
 	});
@@ -218,7 +303,7 @@
 
 		<!-- /.panel -->
 		<div class="panel panel-default">
-			<!--       <div class="panel-heading">
+<!--       <div class="panel-heading">
         <i class="fa fa-comments fa-fw"></i> Reply
       </div> -->
 
@@ -232,27 +317,15 @@
 			<div class="panel-body">
 
 				<ul class="chat">
-					<!--start reply  -->
-					<li class="left clearfix" data-rno='12'>
-						<div>
-							<div class="header">
-								<strong class="primary-font">user00</strong> <small
-									class="pull-right text-muted">2018-01-10 13:13</small>
-							</div>
-							<p>Good Job!</p>
-						</div>
-					</li>
-					<!--End reply -->
+
 				</ul>
 				<!-- ./ end ul -->
 			</div>
 			<!-- /.panel .chat-panel -->
 
 			<div class="panel-footer"></div>
-
-
-		</div>
-	</div>
 	<!-- ./ end row -->
+	</div>
+	</div>
 </div>
 <%@include file="../includes/footer.jsp"%>

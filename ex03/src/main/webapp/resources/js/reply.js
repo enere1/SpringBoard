@@ -31,7 +31,8 @@ var replyService = (function() {
 		$.getJSON("/replies/pages/" + bno + "/" + page + ".json",
 				function(data) {
 					if (callback) {
-						callback(data);
+						//callback(data); //bring only comment
+						callback(data.replyCnt,data.list); //bring number of comment and list
 					}
 				}).fail(function(xhr, status, err) {
 			if (error) {
