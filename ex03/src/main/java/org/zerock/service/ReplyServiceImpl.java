@@ -36,7 +36,7 @@ public class ReplyServiceImpl implements ReplyService{
 		log.info("modify...."+vo);
 		return mapper.update(vo);
 	}
-
+	
 	@Override
 	public int remove(Long rno) {
 		log.info("remove...."+rno);
@@ -56,5 +56,7 @@ public class ReplyServiceImpl implements ReplyService{
 			mapper.getCountByBno(bno),
 			mapper.getListWithPaging(cri, bno));
 	}
+
+	
 
 }
