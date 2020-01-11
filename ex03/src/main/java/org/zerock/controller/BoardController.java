@@ -29,14 +29,6 @@ public class BoardController {
 
 	}
 
-	/*
-	 * @GetMapping("/list") public void list(Model model) {
-	 * 
-	 * log.info("list"); model.addAttribute("list", service.getList(cri));
-	 * 
-	 * }
-	 */
-	
 	@GetMapping("/list")
 	public void list(Criteria cri,Model model) {
 
@@ -45,29 +37,7 @@ public class BoardController {
 		model.addAttribute("pageMaker", new PageDTO(cri,123));
 	}
 
-	// @GetMapping("/list")
-	// public void list(Criteria cri, Model model) {
-	//
-	// log.info("list: " + cri);
-	// model.addAttribute("list", service.getList(cri));
-	//
-	// }
-
-	/*
-	 * @GetMapping("/list") public void list(Criteria cri, Model model) {
-	 * 
-	 * log.info("list: " + cri); model.addAttribute("list", service.getList(cri));
-	 * // model.addAttribute("pageMaker", new PageDTO(cri, 123));
-	 * 
-	 * int total = service.getTotal(cri);
-	 * 
-	 * log.info("total: " + total);
-	 * 
-	 * model.addAttribute("pageMaker", new PageDTO(cri, total));
-	 * 
-	 * }
-	 */
-
+	
 	@PostMapping("/register")
 	public String register(BoardVO board, RedirectAttributes rttr) {
 
@@ -88,13 +58,6 @@ public class BoardController {
 	}
 
 
-
-	/*
-	 * @GetMapping({ "/get", "/modify" }) public void get(@RequestParam("bno") Long
-	 * bno, @ModelAttribute("cri") Criteria cri, Model model) {
-	 * 
-	 * log.info("/get or modify"); model.addAttribute("board", service.get(bno)); }
-	 */
 	@PostMapping("/modify")
 	public String modify(BoardVO board, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
 		log.info("modify:" + board);
@@ -102,26 +65,10 @@ public class BoardController {
 		if (service.modify(board)) {
 			rttr.addFlashAttribute("result", "success");
 		}
-		rttr.addAttribute("pageNum", cri.getPageNum());
-		rttr.addAttribute("amount", cri.getAmount());
-		
-		return "redirect:/board/list";
+				
+		return "redirect:/board/list" + cri.getListLink();
 	}
-
-	/*
-	 * @PostMapping("/modify") public String modify(BoardVO
-	 * board, @ModelAttribute("cri") Criteria cri, RedirectAttributes rttr) {
-	 * log.info("modify:" + board);
-	 * 
-	 * if (service.modify(board)) { rttr.addFlashAttribute("result", "success"); }
-	 * 
-	 * rttr.addAttribute("pageNum", cri.getPageNum()); rttr.addAttribute("amount",
-	 * cri.getAmount()); rttr.addAttribute("type", cri.getType());
-	 * rttr.addAttribute("keyword", cri.getKeyword());
-	 * 
-	 * return "redirect:/board/list"; }
-	 */
-
+	
 	@PostMapping("/remove")
 	public String remove(@RequestParam("bno") Long bno,  @ModelAttribute("cri") Criteria cri,  RedirectAttributes rttr) {
 
@@ -129,22 +76,10 @@ public class BoardController {
 		if (service.remove(bno)){
 			rttr.addFlashAttribute("result", "success");
 		}
-		rttr.addAttribute("pageNum", cri.getPageNum());
-		rttr.addAttribute("amount", cri.getAmount());
-		return "redirect:/board/list";
+			
+		return "redirect:/board/list" + cri.getListLink();
 	}
 
-	/*
-	 * @PostMapping("/remove") public String remove(@RequestParam("bno") Long bno,
-	 * Criteria cri, RedirectAttributes rttr) {
-	 * 
-	 * log.info("remove..." + bno); if (service.remove(bno)) {
-	 * rttr.addFlashAttribute("result", "success"); } rttr.addAttribute("pageNum",
-	 * cri.getPageNum()); rttr.addAttribute("amount", cri.getAmount());
-	 * rttr.addAttribute("type", cri.getType()); rttr.addAttribute("keyword",
-	 * cri.getKeyword());
-	 * 
-	 * return "redirect:/board/list"; }
-	 */
+
 
 }

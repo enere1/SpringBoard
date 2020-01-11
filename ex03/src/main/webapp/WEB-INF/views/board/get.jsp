@@ -14,27 +14,33 @@
 				<h4 class="modal-title" id="myModalLabel">REPLY MODAL</h4>
 			</div>
 			<div class="modal-body">
-				<div class="form-group">
-					<label>Reply</label> <input class="form-control" name='reply'
-						value='New Reply!!!!'>
-				</div>
+				
 				<div class="form-group">
 					<label>Replyer</label> <input class="form-control" name='replyer'
 						value='replyer'>
 				</div>
+				
+				<div class="form-group">
+					<label>Reply</label> <input class="form-control" name='reply'
+						value='New Reply!!!!'>
+				</div>
+
 				<div class="form-group">
 					<label>Reply Date</label> <input class="form-control"
 						name='replyDate' value='2018-01-01 13:13'>
 				</div>
-
-			</div>
-
-		</div>
-		<!-- /.modal-content -->
-	</div>
-	<!-- /.modal-dialog -->
-</div>
-<!-- /.modal -->
+       </div>
+<div class="modal-footer">
+        <button id='modalModBtn' type="button" class="btn btn-warning">Modify</button>
+        <button id='modalRemoveBtn' type="button" class="btn btn-danger">Remove</button>
+        <button id='modalRegisterBtn' type="button" class="btn btn-primary">Register</button>
+        <button id='modalCloseBtn' type="button" class="btn btn-default">Close</button>
+      </div>          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
 
 <script type="text/javascript" src="/resources/js/reply.js"></script>
 
@@ -42,59 +48,42 @@
 	console.log("===============");
 	console.log("JS TEST");
 
-	$(document)
-			.ready(
-					function() {
-						var bnoValue = '<c:out value="${board.bno}"/>';
-						var replyUL = $(".chat");
+	$(document).ready(function() {
+		var bnoValue = '<c:out value="${board.bno}"/>';
+		var replyUL = $(".chat");
 
-						showList(1);
+		showList(1);
 
-						function showList(page) {
-							console.log("show list" + page);
-							replyService
-									.getList(
-											{
-												bno : bnoValue,
-												page : page || 1
-											},
-											function(replyCnt, list) {
-												console.log("replyCnt :"
-														+ replyCnt);
-												console.log("list :" + list);
-												console.log(list);
+		function showList(page) {
+		 console.log("show list" + page);
+			replyService.getList(
+				{bno : bnoValue,
+				page : page || 1},
+		
+				
+		function(replyCnt, list) {
+		  console.log("replyCnt :"+ replyCnt);
+		  console.log("list :" + list);
+		  console.log(list);
 
-												if (page == -1) {
-													pageNum = Math
-															.ceil(replyCnt / 10.0);
-													showList(pageNum);
-													return;
-												}
+		if (page == -1) {pageNum = Math.ceil(replyCnt / 10.0);
+						 showList(pageNum);
+						return;}
 
-												var str = "";
+			var str = "";
 
-												if (list == null
-														|| list.length == 0) {
-													return;
-
-												}
-												//댓글 출력
-												for (var i = 0, len = list.length || 0; i < len; i++) {
-													str += "<li class='left clearfix' data-rno='"+list[i].rno+"'>";
-													str += " <div><div class='header'><strong class='primary-font'>"
-															+ list[i].replyer
-															+ "</storng>";
-													str += " <small class = 'pull-right text-muted'>"
-															+ replyService
-																	.displayTime(list[i].replyDate)
-															+ "</small></div>";
-													str += " <p>"
-															+ list[i].reply
-															+ "</p><div></div></li>";
-												}
-												replyUL.html(str);
-												showReplyPage(replyCnt);
-											});//end function
+		if (list == null|| list.length == 0) {
+			return;}
+		
+		//댓글 출력
+		for (var i = 0, len = list.length || 0; i < len; i++) {
+		str += "<li class='left clearfix' data-rno='"+list[i].rno+"'>";
+		str += " <div><div class='header'><strong class='primary-font'>"+ list[i].replyer+ "</storng>";
+		str += " <small class = 'pull-right text-muted'>"+ replyService.displayTime(list[i].replyDate)+ "</small></div>";
+		str += " <p>"+ list[i].reply+ "</p><div></div></li>";}
+		replyUL.html(str);
+		showReplyPage(replyCnt);
+				});//end function
 						}//end showList
 
 						var pageNum = 1;
@@ -176,7 +165,12 @@
 						var modalModBtn = $("#modalModBtn");
 						var modalRemoveBtn = $("#modalRemoveBtn");
 						var modalRegisterBtn = $("#modalRegisterBtn");
+						
+						$("#modalCloseBtn").on("click", function(e) {
 
+							modal.modal('hide');
+						});
+						
 						//댓글 등록버튼 누르기
 						$("#addReplyBtn").on("click", function(e) {
 
@@ -237,6 +231,7 @@
 							});
 						});
 
+				
 						//삭제버튼
 						modalRemoveBtn.on("click", function(e) {
 
@@ -250,9 +245,6 @@
 							});
 						});
 
-						
-						
-						
 					});
 </script>
 <div class="row">
@@ -299,6 +291,8 @@
 					<input type='hidden' id='bno' name='bno' value='<c:out value="${board.bno}"/>'>
 					<input type='hidden' name='pageNum' value='<c:out value="${cri.pageNum}"/>'>
 					<input type='hidden' name='amount' value='<c:out value="${cri.amount}"/>'>
+					<input type='hidden' name='keyword' value='<c:out value="${cri.keyword}"/>'>
+					<input type='hidden' name='type' value='<c:out value="${cri.type}"/>'>
 				</form>
 
 			</div>
