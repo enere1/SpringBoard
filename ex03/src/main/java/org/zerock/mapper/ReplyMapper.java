@@ -13,9 +13,11 @@ public interface ReplyMapper {
 	public ReplyVO read(Long bno);
 	
 	public int delete (Long targetRno);
-
+	
 	public int update(ReplyVO reply);
-
+	
+	public int deleteAll(Long bno);
+	
 	public List<ReplyVO> getListWithPaging(
 			@Param("cri") Criteria cri,
 			@Param("bno") Long bno

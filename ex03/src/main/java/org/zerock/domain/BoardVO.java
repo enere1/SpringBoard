@@ -1,6 +1,7 @@
 package org.zerock.domain;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -13,5 +14,8 @@ public class BoardVO {
 	private String Writer;
 	private Date regdate;
 	private Date updateDate;
-		
+	
+	private int replyCnt;
+	//if register board process boardAttachVO
+	private List<BoardAttachVO> attachList;
 }
